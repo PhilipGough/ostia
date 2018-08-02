@@ -8,13 +8,21 @@ jobs:
     working_directory: /go/src/github.com/3scale/ostia
 
     steps:
+
+      - run:
+          name: Install OpenShift Client Tools
+          working_directory: /tmp
+          command: |
+            wget https://github.com/openshift/origin/releases/download/v3.9.0/openshift-origin-client-tools-v3.9.0-191fece-linux-64bit.tar.gz
+            tar xzf /tmp/openshift*.tar.gz && mv /tmp/openshift-origin-client-tools-v3.9.0-191fece-linux-64bit/oc .
+            ./oc cluster up
+
       - checkout
 
       - restore_cache:
           keys:
             - v1-gopkg-cache-{{ arch }}-{{ checksum "ostia-operator/Gopkg.lock" }}
             - v1-gopkg-cache-{{ arch }}-{{ .Branch }}
-
       - run:
           name: Install dependencies
           working_directory: ostia-operator
