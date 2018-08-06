@@ -33,7 +33,7 @@ oc adm policy add-cluster-role-to-user cluster-admin system:serviceaccount:ostia
 
 ```
 oc new-project ostia
-oc create -f ostia-operator/deploy/operator.yml
+oc create -f ostia-operator/deploy/operator.yaml
 ```
 
 * Deploy the example Custom Resource in any namespace:
@@ -101,3 +101,15 @@ make build
 ```
 make push
 ```
+
+## Testing
+
+The `ostia-operator` project is configured to use [circleci](https://circleci.com) and there are a number of integration tests
+which will run when a pull request is triggered against this repository.
+
+Tests can be run locally but expect a running an accessible OpenShift cluster with an `nip.io` hostname.
+
+Run integration tests via `make integration` which accepts an optional argument:
+1. `OPENSHIFT_PUBLIC_HOSTNAME`. The public hostname for OpenShift cluster. Default `127.0.0.1`
+
+The same tests are run against the `circleci` build server but because of the executor type required, cannot be executed locally via `circleci build`.
