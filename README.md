@@ -17,16 +17,18 @@ git clone https://github.com/3scale/ostia.git
 cd ostia
 ```
 
-* Create the required objects, first the Custom Resource Definition:
+* At the cluster scope, create the Custom Resource Definition (requires `cluster-admin` role):
 
 ```
+oc login -u system:admin
 oc create -f ostia-operator/deploy/crd.yaml
 ```
 
-* Deploy the operator into the namespace where you wish to manage your API:
+* Create the RBAC (requires `cluster-admin` role). Deploy the operator into the namespace where you wish to manage your API:
 
 ```
 oc new-project my-hello-api
+oc create -f ostia-operator/deploy/rbac.yaml
 oc create -f ostia-operator/deploy/operator.yaml
 ```
 

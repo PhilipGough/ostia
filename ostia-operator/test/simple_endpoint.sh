@@ -1,12 +1,17 @@
 #!/usr/bin/env bash
 
 source ./common.sh
+
 ns="simple-api-$(generate_random_string)"
-echo "Testing Simple API Endpoint in namespace ${ns}"
 endpoint="${ns}.${OPENSHIFT_PUBLIC_HOSTNAME}.nip.io"
-oc new-project ${ns} &> /dev/null
+
+echo "Testing Simple API Endpoint in namespace ${ns}"
+oc new-project ${ns} > /dev/null
 ./deploy_operator.sh ${ns}
-oc new-app -f ./test_objects/endpoint.yaml --param HOSTNAME=${endpoint} -n ${ns} &> /dev/null
+oc new-app -f ./test_objects/echo_api.yaml -n ${ns} >/dev/null
+wait_for_pod_ready app echo-api ${ns}
+echo "echo-api deployed in ${ns}"
+oc new-app -f ./test_objects/endpoint.yaml --param HOSTNAME=${endpoint} -n ${ns} >/dev/null
 wait_for_pod_ready app apicast ${ns}
 echo "Proxy deployed successfully in ${ns}"
 # Verifying expected HTTPS status

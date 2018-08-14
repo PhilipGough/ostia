@@ -7,9 +7,19 @@ metadata:
     description: "3scale Echo API"
     iconClass: "icon-ruby"
     tags: "api,echo-api,3scale"
-
 objects:
-
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: echo-api
+  spec:
+    ports:
+    - name: echo-api-port
+      port: 80
+      protocol: TCP
+      targetPort: 9292
+    selector:
+      deploymentconfig: echo-api
 - apiVersion: v1
   kind: DeploymentConfig
   metadata:
@@ -53,20 +63,6 @@ objects:
           - name: quay-auth
     triggers:
     - type: ConfigChange
-
-- apiVersion: v1
-  kind: Service
-  metadata:
-    name: echo-api
-  spec:
-    ports:
-    - name: echo-api-port
-      port: 80
-      protocol: TCP
-      targetPort: 9292
-    selector:
-      deploymentconfig: echo-api
-
 parameters:
 - name: ECHOAPI_IMAGE
   description: "Docker image to the Echo API"
