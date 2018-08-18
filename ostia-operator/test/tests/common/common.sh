@@ -23,11 +23,11 @@ delete_project_and_wait () {
 # Give Pods two minutes to hit ready status before error
 # Expects three args: Key and value filter for Pod metadata labels, Pod namespace
 wait_for_pod_ready () {
- sleep 3 # Wait for Pod to be created before checking its readiness
+ sleep 5 # Wait for Pod to be created before checking its readiness
  retries="12"
  while [[ "retries" -gt "0" ]]
  do
-    if "$(oc get pod -o jsonpath='{.items[?(@.metadata.labels.'${1}'=="'${2}'")].status.containerStatuses[0].ready}' -n ${3} )" == "true"
+    if [ "$(oc get pod -o jsonpath='{.items[?(@.metadata.labels.'${1}'=="'${2}'")].status.containerStatuses[0].ready}' -n ${3} )" == "true" ];
     then
         return
     else
@@ -36,6 +36,7 @@ wait_for_pod_ready () {
     fi
  done
  echo "Pod was not ready in time"
+ oc delete project ${3}
  exit 1
 }
 
@@ -50,5 +51,5 @@ do_http_get() {
 
 # Returns a random string of 8 chars
 generate_random_string() {
-  hexdump -e '/1 "%02x"' -n8 < /dev/urandom
+ hexdump -n 8 -e '4/4 "%08X" 1 "\n"' /dev/random |  tr -dc '[:alnum:]\n\r' | tr '[:upper:]' '[:lower:]'
 }
